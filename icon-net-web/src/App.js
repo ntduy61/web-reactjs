@@ -1,23 +1,44 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
+
+// Import các trang
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 
-const App = () => {
-  const userCookie = Cookies.get("User");
+// Import Layout
+import Layout from "./Layout";
 
+// Component bảo vệ route
+const ProtectedRoute = ({ children }) => {
+  const userCookie = Cookies.get("User");
+  return userCookie ? children : <Navigate to="/login" replace />;
+};
+
+const App = () => {
   return (
     <Router>
       <Routes>
+        {/* Route mặc định chuyển hướng tới Dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+        {/* Route đăng nhập */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Route được bảo vệ, sử dụng Layout */}
         <Route
-          path="/"
+          path="/dashboard"
           element={
-            userCookie ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* Fallback cho route không tìm thấy */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );

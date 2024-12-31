@@ -23,7 +23,7 @@ const login = async (Lang, user_name, password, ip_address, navigate) => {
     const msg = res.output?.iRETURN_MSG || "";
 
     console.log(`Response: [value:${value}, msg:${msg}]`);
-
+    
     if (value === "00") {
       const store = {
         user_name,
@@ -38,6 +38,9 @@ const login = async (Lang, user_name, password, ip_address, navigate) => {
       Cookies.set("Pub_IP", ip_address, { path: "/" });
 
       navigate("/dashboard");
+    }else{
+      console.log(msg);
+      window.toastr.error(msg);
     }
   } catch (error) {
     console.error("Login error:", error);
